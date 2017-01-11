@@ -48,36 +48,5 @@ class StrategyColumnFiller extends Strategy
 				$this->sudoku->setValueWithCoordinate($number, $cell->getCoordinate());
 			}
 		}
-
-		foreach ($this->sudoku->getGrid() as $row => $rows) {
-			$cellCandidates = [];
-
-			foreach ($rows as $column => $cell) {
-				//echo sprintf("Checking column %d\n", $column);
-
-				/** @var Cell $cell */
-				if ($cell->hasValue() && $cell->getValue() == $number) {
-					//echo sprintf("Row %d has already number %d\n", $row, $number);
-					break;
-				}
-
-				if ($cell->hasValue()) {
-					//echo sprintf("Column %d has already a value %d\n", $column, $cell->getValue());
-					continue;
-				}
-
-				if ($cell->hasCandidate($number)) {
-					$cellCandidates[] = $cell;
-				}
-			}
-
-			if (count($cellCandidates) === 1) {
-				//echo sprintf("Row %d can place %s %s\n", $row, $number, $cellCandidates[0]);
-				/** @var Cell $cell */
-				$cell = $cellCandidates[0];
-				$this->sudoku->setValueWithCoordinate($number, $cell->getCoordinate());
-			}
-
-		}
 	}
 }

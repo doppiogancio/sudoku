@@ -18,9 +18,20 @@ class SudokuSummerExpert extends Sudoku {
 		_67_43___
 		8_____3__";
 
+
+		$text = "_____1___
+		1_____356
+		2__4_3___
+		_1_______
+		___1__562
+		47_6_____
+		__9_3____
+		_3__5_2__
+		__5__9__7";
+
 		$this->initFromString($text);
 
-		$this->setValue(5, 1, 7);
+		//$this->setValue(5, 1, 7);
 
 		$this->processQueue();
 

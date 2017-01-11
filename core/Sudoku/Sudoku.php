@@ -6,9 +6,16 @@ use core\Cell\Cell;
 use core\Coordinate\Coordinate;
 use core\Queue\Queue;
 
+use core\Strategy\Strategy;
+use core\Strategy\StrategyRowFiller;
+use core\Strategy\StrategyColumnFiller;
+use core\Strategy\StrategyRegionFiller;
+
 class Sudoku {
 	protected $grid;
 	protected $q;
+
+	protected $strategies;
 
 	public function __construct()
 	{
@@ -18,6 +25,20 @@ class Sudoku {
 			for ($j=1;$j<=9;$j++) {
 				$this->grid[$i][$j] = new Cell(new Coordinate($i, $j));
 			}
+		}
+
+		$this->strategies = [
+			new StrategyRowFiller($this),
+			new StrategyColumnFiller($this),
+			new StrategyRegionFiller($this)
+		];
+	}
+
+	public function applyStrategies()
+	{
+		/** @var Strategy $strategy */
+		foreach ($this->strategies as $strategy) {
+			$strategy->execute();
 		}
 	}
 

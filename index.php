@@ -9,6 +9,7 @@ use core\Formatter\FormatterGrid;
 use core\Formatter\FormatterTabbedGridWithCandidates;
 use core\Strategy\StrategyRowFiller;
 use core\Strategy\StrategyColumnFiller;
+use core\Strategy\StrategyRegionFiller;
 
 try {
 	$sudoku = new SudokuSummerExpert();
@@ -17,14 +18,8 @@ try {
 	$formatterWithCandidates = new FormatterTabbedGridWithCandidates($sudoku);
 
 	// Number placed: 25
-	$strategyRowFiller = new StrategyRowFiller($sudoku);
-	$strategyRowFiller = new StrategyColumnFiller($sudoku);
+	$sudoku->applyStrategies();
 
-	$strategyRowFiller->execute();
-	$strategyRowFiller->execute();
-
-	$strategyRowFiller->execute();
-	$strategyRowFiller->execute();
 
 	print $formatter->getOutput();
 
@@ -33,4 +28,3 @@ try {
 catch (Exception $e) {
 	die($e->getMessage());
 }
-
