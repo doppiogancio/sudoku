@@ -21,12 +21,6 @@ class Queue {
 
 	public function push(Cell $cell)
 	{
-		echo sprintf(
-			"Pushing to queue cell(%d,%d)\n",
-			$cell->getCoordinate()->getRow(),
-			$cell->getCoordinate()->getColumn()
-		);
-
 		$this->queue[] = $cell;
 	}
 

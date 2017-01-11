@@ -1,7 +1,5 @@
 <?php
 
-define ('SUDOKU_DEFAULT_CELL_VALUE', '_');
-
 require_once "loader.php";
 
 use core\Sudoku\SudokuSummerExpert;
