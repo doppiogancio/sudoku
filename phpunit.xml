@@ -3,4 +3,10 @@
     <testsuite name="Sudoku Test Suite">
         <directory>Test</directory>
     </testsuite>
+
+    <php>
+        <ini name="display_errors" value="On" />
+        <ini name="display_startup_errors" value="On" />
+        <ini name="error_reporting" value="E_ALL" />
+    </php>
 </phpunit>

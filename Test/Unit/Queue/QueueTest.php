@@ -21,13 +21,23 @@ class QueueTest extends \PHPUnit_Framework_TestCase
 
     public function testPushCell()
     {
-        define('SUDOKU_DEFAULT_CELL_VALUE', '_');
-
         $q = new Queue();
         $cell = new Cell(new Coordinate(1,1));
 
         $q->push($cell);
 
         $this->assertEquals(true, !$q->isEmpty());
+    }
+
+    public function testShiftCell()
+    {
+        $q = new Queue();
+        $cell = new Cell(new Coordinate(1,1));
+
+        $q->push($cell);
+
+        $shiftedCell = $q->shift();
+
+        $this->assertEquals($cell, $shiftedCell);
     }
 }

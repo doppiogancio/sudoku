@@ -3,7 +3,7 @@
 namespace core\Cell;
 
 use core\Coordinate\Coordinate;
-use Exception;
+use core\Exception\WrongValueException;
 
 class Cell
 {
@@ -43,16 +43,21 @@ class Cell
 		$coordinate = $this->coordinate;
 
 		if ($this->hasValue()) {
+		    throw new NotEmptyException();
+		    exit;
+
 			echo sprintf(
 				"ERROR: Cell (%d,%d) has already a value",
 				$coordinate->getRow(),
 				$coordinate->getColumn()
 			);
 
-			return ;
+			return false;
 		}
 
 		if (!is_numeric($value) || ($value < 1) || ($value > 9)) {
+            throw new WrongValueException('vediamo se se la prende!!!');
+
 			echo sprintf(
 				"ERROR: wrong value for setValue(%d) at (%d,%d)\n",
 				$value,
@@ -64,6 +69,10 @@ class Cell
 		}
 
 		if (!in_array($value, $this->getCandidates())) {
+		    throw new WrongValueException('Questo valore non e buono!!!');
+
+            exit;
+
 			echo sprintf(
 				"ERROR: value is in not a candidate (%s) for setValue(%d) at (%d,%d)\n",
 				implode(",", $this->getCandidates()),
