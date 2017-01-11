@@ -63,6 +63,20 @@ class CellTest extends PHPUnit_Framework_TestCase
         return $cell;
     }
 
+	/**
+	 * @depends testDeleteCandidate
+	 *
+	 * @param Cell $cell
+	 *
+	 * @expectedException \core\Exception\LastCandidateException
+	 */
+	public function testDeleteLastCandidate(Cell $cell)
+	{
+		$cell->deleteCandidate(3);
+		$cell->deleteCandidate(5);
+		$cell->deleteCandidate(8);
+	}
+
     /**
      * @depends testCellDefaults
      * @param Cell $cell
@@ -83,9 +97,14 @@ class CellTest extends PHPUnit_Framework_TestCase
      */
     public function testSetValue(Cell $cell)
     {
-        $cell->setValue(5);
+	    $row = 1;
+	    $column = 2;
+	    $value = 5;
 
-        $this->assertEquals(5, $cell->getValue());
+	    $cell = new Cell(new Coordinate($row, $column));
+        $cell->setValue($value);
+
+        $this->assertEquals($value, $cell->getValue());
         $this->assertEquals([], $cell->getCandidates());
     }
 

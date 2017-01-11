@@ -3,6 +3,8 @@
 namespace core\Cell;
 
 use core\Coordinate\Coordinate;
+use core\Exception\LastCandidateException;
+use core\Exception\NotEmptyException;
 use core\Exception\WrongValueException;
 
 class Cell
@@ -40,52 +42,17 @@ class Cell
 
 	public function setValue($value)
 	{
-		$coordinate = $this->coordinate;
-
 		if ($this->hasValue()) {
 		    throw new NotEmptyException();
-		    exit;
-
-			echo sprintf(
-				"ERROR: Cell (%d,%d) has already a value",
-				$coordinate->getRow(),
-				$coordinate->getColumn()
-			);
-
-			return false;
 		}
 
 		if (!is_numeric($value) || ($value < 1) || ($value > 9)) {
-            throw new WrongValueException('vediamo se se la prende!!!');
-
-			echo sprintf(
-				"ERROR: wrong value for setValue(%d) at (%d,%d)\n",
-				$value,
-				$coordinate->getRow(),
-				$coordinate->getColumn()
-			);
-
-			return;
+            throw new WrongValueException('WrongValueException: '.$value);
 		}
 
 		if (!in_array($value, $this->getCandidates())) {
-		    throw new WrongValueException('Questo valore non e buono!!!');
-
-            exit;
-
-			echo sprintf(
-				"ERROR: value is in not a candidate (%s) for setValue(%d) at (%d,%d)\n",
-				implode(",", $this->getCandidates()),
-				$value,
-				$coordinate->getRow(),
-				$coordinate->getColumn()
-			);
-
-			return;
+		    throw new WrongValueException('Illegal value');
 		}
-
-		// Override with correct values
-		echo sprintf("setValue %d at (%d,%d)\n", $value, $coordinate->getRow(), $coordinate->getColumn());
 
 		$this->value = $value;
 		$this->candidates = [];
@@ -119,40 +86,15 @@ class Cell
 	public function deleteCandidate($candidate)
 	{
 		if ($this->countCandidates() === 1) {
-			return ;
-			print sprintf(
-				"ERROR: trying to delete a candidate(%d) from (%s) for cell (%d,%d) with a single candidate. Its value %s\n",
-				$candidate,
-				implode(",", $this->getCandidates()),
-				$this->getCoordinate()->getRow(),
-				$this->getCoordinate()->getColumn(),
-				$this->getValue()
-			);
-
+			throw new LastCandidateException("Trying to delete last cell candidate");
 		}
 
 		if ($this->hasValue()) {
-			return ;
-
-			print sprintf(
-				"ERROR: trying to delete a candidate for cell (%d,%d). Its value %d\n",
-				$this->getCoordinate()->getRow(),
-				$this->getCoordinate()->getColumn(),
-				$this->getValue()
-			);
-
-			return ;
+			throw new NotEmptyException();
 		}
 
-		if (!$this->hasCandidates()) {
-			return ;
-			throw new Exception(
-				sprintf(
-					"no candidates for cell (%d,%d)\n",
-					$this->getCoordinate()->getRow(),
-					$this->getCoordinate()->getColumn()
-				)
-			);
+		if (!$this->hasCandidate($candidate)) {
+			throw new WrongValueException();
 		}
 
 		$key = array_search($candidate, $this->candidates);

@@ -8,29 +8,17 @@ class SudokuSummerHard extends Sudoku {
 	{
 		parent::__construct();
 
-		$text = "___7_2___
-		___59__27
-		2_3_____1
-		____18___
-		68_______
-		_______93
-		___92__3_
-		8_7____15
-		_32______";
+		$text = "_9____1__
+		7_______3
+		_6______4
+		__2_518__
+		_3___6__9
+		___4___1_
+		__85_____
+		1___84_9_
+		_2__3___1";
 
 		$this->initFromString($text);
-
-		// Extra
-		// TODO: far diventare questi numeri una strategia
-		$this->setValue(3, 4, 1);
-		/*
-		$this->setValue(7, 3, 2);
-
-		$this->setValue(7, 6, 1);
-		$this->setValue(8, 6, 7);
-		$this->setValue(9, 3, 7);
-		$this->setValue(9, 5, 6);
-		*/
 
 		$this->processQueue();
 	}

@@ -101,12 +101,13 @@ class Sudoku {
 		/** @var Cell $cell */
 		$cell = $this->grid[$row][$column];
 
-		//echo sprintf("deleteCandidateFromCell %d at (%d,%d)\n", $value, $row, $column);
+		if (!$cell->hasCandidate($value)) {
+			return $this;
+		}
 
 		$cell->deleteCandidate($value);
 
 		if ($cell->countCandidates() == 1) {
-			//echo sprintf("adding to queue value %d for cell at (%d,%d)\n", $newValue, $row, $column);
 			$this->q->push($cell);
 		}
 
@@ -115,8 +116,6 @@ class Sudoku {
 
 	protected function _deleteCandidateFromRow($value, $row)
 	{
-		//echo sprintf("_deleteCandidateFromRow %d from row %d\n", $value, $row);
-
 		for ($i = 1; $i <= 9; $i++) {
 			$this->deleteCandidateFromCell($value, $row, $i);
 		}
@@ -124,8 +123,6 @@ class Sudoku {
 
 	protected function _deleteCandidateFromColumn($value, $column)
 	{
-		//echo sprintf("_deleteCandidateFromColumn %d from row %d\n", $value, $column);
-
 		for ($i = 1; $i <= 9; $i++) {
 			$this->deleteCandidateFromCell($value, $i, $column);
 		}
@@ -161,8 +158,6 @@ class Sudoku {
 	{
 		$origin = $this->_getRegionOriginByCell($row, $column);
 
-		//echo sprintf("_deleteCandidateFromRegion %d from region(%d,%d)\n", $value, $origin['row'], $origin['column']);
-
 		for ($row = $origin['row']; $row <= ($origin['row'] + 2); $row++) {
 			for ($column = $origin['column']; $column <= ($origin['column'] + 2); $column++) {
 				$this->deleteCandidateFromCell($value, $row, $column);
@@ -189,14 +184,14 @@ class Sudoku {
 		$this->_deleteCandidateFromRegion($value, $row, $column);
 
 		if (!$this->q->isEmpty()) {
-			//echo sprintf("La Q non e' vuota!!!\n");
 			$this->processQueue();
 		}
 
 		return $this;
 	}
 
-	public function setValues($values) {
+	public function setValues($values)
+	{
 		foreach ($values as $value) {
 			$this->setValue($value[0], $value[1], $value[2]);
 		}

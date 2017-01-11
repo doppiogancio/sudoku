@@ -5,12 +5,9 @@ require_once "loader.php";
 use core\Sudoku\SudokuSummerExpert;
 use core\Formatter\FormatterGrid;
 use core\Formatter\FormatterTabbedGridWithCandidates;
-use core\Strategy\StrategyRowFiller;
-use core\Strategy\StrategyColumnFiller;
-use core\Strategy\StrategyRegionFiller;
 
 try {
-	$sudoku = new SudokuSummerExpert();
+	$sudoku = new \core\Sudoku\SudokuSimple();
 
 	$formatter = new FormatterGrid($sudoku);
 	$formatterWithCandidates = new FormatterTabbedGridWithCandidates($sudoku);
@@ -24,5 +21,6 @@ try {
 	//print $formatterWithCandidates->getOutput();
 }
 catch (Exception $e) {
-	die($e->getMessage());
+	print $e->getTraceAsString()."\n";
+	die($e->getMessage()."\n");
 }

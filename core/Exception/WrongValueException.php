@@ -2,9 +2,10 @@
 
 namespace core\Exception;
 
-use Core\Exception\CoreException;
 
 class WrongValueException extends CoreException
 {
-
+	public function __construct( ) {
+		parent::__construct( "WrongValueException" );
+	}
 }

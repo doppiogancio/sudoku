@@ -30,6 +30,7 @@ class SudokuTest extends PHPUnit_Framework_TestCase
         $sudoku = new Sudoku();
         $sudoku->initFromString($text);
 
+	    /** @var Cell $cell */
         $cell = $sudoku->getCell(3, 6);
 
         $this->assertEquals(8, $cell->getValue());
