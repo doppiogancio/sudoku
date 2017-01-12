@@ -7,13 +7,15 @@ use core\Formatter\FormatterGrid;
 use core\Formatter\FormatterTabbedGridWithCandidates;
 
 try {
-	$sudoku = new \core\Sudoku\SudokuSimple();
+	$sudoku = new \core\Sudoku\SudokuSummerExpert();
 
 	$formatter = new FormatterGrid($sudoku);
 	$formatterWithCandidates = new FormatterTabbedGridWithCandidates($sudoku);
 
 	// Number placed: 25
-	//$sudoku->applyStrategies();
+	$sudoku->applyStrategies();
+    $sudoku->applyStrategies();
+    $sudoku->applyStrategies();
 
 	print $formatter->getOutput();
 

@@ -21,9 +21,5 @@ class SudokuFirstRow extends Sudoku {
 			[8, 1, 8],
 
 		]);
-
-		//print_r($this->q);
-		$this->processQueue();
-		//print_r($this->q);
 	}
 }

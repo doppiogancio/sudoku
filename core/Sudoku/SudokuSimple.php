@@ -19,9 +19,5 @@ class SudokuSimple extends Sudoku {
 		_5_6_____";
 
 		$this->initFromString($text);
-
-		//print_r($this->q);
-		$this->processQueue();
-		//print_r($this->q);
 	}
 }

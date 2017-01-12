@@ -23,9 +23,5 @@ class SudokuSummerMedium extends Sudoku {
 		// Extra
 		//$this->setValue(3, 4, 1);
 		//$this->setValue(7, 2, 7);
-
-		$this->processQueue();
-
-
 	}
 }

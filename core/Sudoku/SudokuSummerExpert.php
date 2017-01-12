@@ -30,11 +30,5 @@ class SudokuSummerExpert extends Sudoku {
 		__5__9__7";
 
 		$this->initFromString($text);
-
-		//$this->setValue(5, 1, 7);
-
-		$this->processQueue();
-
-
 	}
 }

@@ -10,20 +10,25 @@ use core\Strategy\Strategy;
 use core\Strategy\StrategyRowFiller;
 use core\Strategy\StrategyColumnFiller;
 use core\Strategy\StrategyRegionFiller;
+use SplObserver;
+use SplSubject;
 
-class Sudoku {
+class Sudoku implements SplObserver
+{
 	protected $grid;
 	protected $q;
 
-	protected $strategies;
+    protected $strategies;
+    protected $updatedCounter = 0;
+    protected $numberPlaced = 0;
 
 	public function __construct()
 	{
-		$this->q = new Queue();
-
 		for ($i=1;$i<=9;$i++) {
 			for ($j=1;$j<=9;$j++) {
-				$this->grid[$i][$j] = new Cell(new Coordinate($i, $j));
+				$cell = new Cell(new Coordinate($i, $j));
+                $this->grid[$i][$j] = $cell;
+                $cell->attach($this);
 			}
 		}
 
@@ -33,6 +38,37 @@ class Sudoku {
 			new StrategyRegionFiller($this)
 		];
 	}
+
+    /**
+     * @param SplSubject $subject
+     */
+    public function update(SplSubject $subject)
+    {
+        if ($subject instanceof Cell) {
+            if ($subject->hasValue()) {
+                $this->numberPlaced++;
+
+                echo sprintf("numberPlaced #%d\n", $this->numberPlaced);
+
+                if ($this->numberPlaced == 81) {
+                    throw new \Exception('End of the game');
+                }
+
+                return ;
+            }
+
+            $candidates = $subject->getCandidates();
+
+            if (empty($candidates)) {
+                $cell = $this->q->shift();
+                return;
+            }
+
+            $newValue = array_shift($candidates);
+
+            $this->setValue($newValue, $subject->getCoordinate()->getRow(), $subject->getCoordinate()->getColumn());
+        }
+    }
 
 	public function applyStrategies()
 	{
@@ -68,27 +104,6 @@ class Sudoku {
 		}
 	}
 
-	public function processQueue()
-	{
-		/** @var Cell $cell */
-		$cell = $this->q->shift();
-
-		while (!empty($cell)) {
-			$candidates = $cell->getCandidates();
-
-			if (empty($candidates)) {
-				$cell = $this->q->shift();
-				continue;
-			}
-
-			$newValue = array_shift($candidates);
-
-			$this->setValue($newValue, $cell->getCoordinate()->getRow(), $cell->getCoordinate()->getColumn());
-
-			$cell = $this->q->shift();
-		}
-	}
-
 	public function getCellCandidates($row, $column)
 	{
 		/** @var Cell $cell */
@@ -106,10 +121,6 @@ class Sudoku {
 		}
 
 		$cell->deleteCandidate($value);
-
-		if ($cell->countCandidates() == 1) {
-			$this->q->push($cell);
-		}
 
 		return $this;
 	}
@@ -173,7 +184,11 @@ class Sudoku {
 	public function setValue($value, $row, $column)
 	{
 		/** @var Cell $cell */
-		$cell = $this->grid[$row][$column];
+		$cell = $this->getCell($row, $column);
+
+		if ($cell->hasValue()) {
+		    return ;
+        }
 
 		$cell->setValue($value);
 
@@ -182,10 +197,6 @@ class Sudoku {
 		$this->_deleteCandidateFromRow($value, $row);
 		$this->_deleteCandidateFromColumn($value, $column);
 		$this->_deleteCandidateFromRegion($value, $row, $column);
-
-		if (!$this->q->isEmpty()) {
-			$this->processQueue();
-		}
 
 		return $this;
 	}

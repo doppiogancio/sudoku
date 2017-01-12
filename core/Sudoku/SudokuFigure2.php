@@ -47,9 +47,5 @@ class SudokuFigure2 extends Sudoku {
 			[9, 9, 6],
 			[2, 9, 7],
 		]);
-
-		//print_r($this->q);
-		$this->processQueue();
-		//print_r($this->q);
 	}
 }

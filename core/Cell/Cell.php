@@ -6,13 +6,16 @@ use core\Coordinate\Coordinate;
 use core\Exception\LastCandidateException;
 use core\Exception\NotEmptyException;
 use core\Exception\WrongValueException;
+use SplObserver;
+use SplSubject;
 
-class Cell
+class Cell implements SplSubject
 {
 	protected $value;
 	protected $candidates;
 
-	protected $coordinate;
+    protected $coordinate;
+    protected $observers;
 
 	protected $row;
 	protected $column;
@@ -24,11 +27,45 @@ class Cell
 		$this->candidates = range(1,9);
 
 		$this->coordinate = $coordinate;
+		$this->observers = [];
 
 		$this->row = null;
 		$this->column = null;
 		$this->region = null;
 	}
+
+    /**
+     * @param SplObserver $observer
+     * @return mixed
+     */
+    public function attach(SplObserver $observer)
+    {
+        $this->observers[] = $observer;
+        return $this;
+    }
+
+    /**
+     * @param SplObserver $observer
+     * @return mixed
+     */
+    public function detach(SplObserver $observer)
+    {
+        foreach($this->observers as $okey => $oval) {
+            if ($oval == $observer) {
+                unset($this->observers[$okey]);
+            }
+        }
+
+        return $this;
+    }
+    public function notify()
+    {
+        foreach($this->observers as $obs) {
+            $obs->update($this);
+        }
+
+        return $this;
+    }
 
 	public function getCoordinate()
 	{
@@ -56,6 +93,8 @@ class Cell
 
 		$this->value = $value;
 		$this->candidates = [];
+
+		$this->notify();
 	}
 
 	public function getValue()
@@ -102,6 +141,10 @@ class Cell
 		if($key !== false) {
 			unset($this->candidates[$key]);
 		}
+
+		if ($this->countCandidates() == 1) {
+		    $this->notify();
+        }
 	}
 
 	public function __toString()

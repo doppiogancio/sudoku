@@ -19,7 +19,5 @@ class SudokuSummerHard extends Sudoku {
 		_2__3___1";
 
 		$this->initFromString($text);
-
-		$this->processQueue();
 	}
 }
