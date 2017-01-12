@@ -13,8 +13,7 @@ try {
 	$formatterWithCandidates = new FormatterTabbedGridWithCandidates($sudoku);
 
 	// Number placed: 25
-	$sudoku->applyStrategies();
-
+	//$sudoku->applyStrategies();
 
 	print $formatter->getOutput();
 

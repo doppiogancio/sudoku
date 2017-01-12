@@ -43,7 +43,7 @@ class Cell
 	public function setValue($value)
 	{
 		if ($this->hasValue()) {
-		    throw new NotEmptyException();
+		    throw new NotEmptyException("Current value: ".$this->getValue());
 		}
 
 		if (!is_numeric($value) || ($value < 1) || ($value > 9)) {
@@ -90,7 +90,7 @@ class Cell
 		}
 
 		if ($this->hasValue()) {
-			throw new NotEmptyException();
+			throw new NotEmptyException("Current value: ".$this->getValue());
 		}
 
 		if (!$this->hasCandidate($candidate)) {

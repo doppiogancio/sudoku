@@ -7,7 +7,7 @@ use core\Exception\CoreException;
 
 class NotEmptyException extends CoreException
 {
-	public function __construct( ) {
-		parent::__construct( "NotEmptyException" );
+	public function __construct( $message ) {
+		parent::__construct( $message );
 	}
 }
