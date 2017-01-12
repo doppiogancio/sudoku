@@ -17,10 +17,6 @@ class Cell implements SplSubject
     protected $coordinate;
     protected $observers;
 
-	protected $row;
-	protected $column;
-	protected $region;
-
 	public function __construct(Coordinate $coordinate)
 	{
 		$this->value = SUDOKU_DEFAULT_CELL_VALUE;
@@ -28,10 +24,6 @@ class Cell implements SplSubject
 
 		$this->coordinate = $coordinate;
 		$this->observers = [];
-
-		$this->row = null;
-		$this->column = null;
-		$this->region = null;
 	}
 
     /**

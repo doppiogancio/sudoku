@@ -19,7 +19,6 @@ class Sudoku implements SplObserver
 	protected $q;
 
     protected $strategies;
-    protected $updatedCounter = 0;
     protected $numberPlaced = 0;
 
 	public function __construct()
