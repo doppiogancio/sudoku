@@ -36,6 +36,14 @@ class Cell implements \SplSubject
 	 */
 	static public function getInstance($row, $column)
 	{
+	    if (!isset(self::$cell[$row])) {
+            self::$cell[$row] = [];
+        }
+
+        if (!isset(self::$cell[$row][$column])) {
+            self::$cell[$row][$column] = null;
+        }
+
 		if (empty(self::$cell[$row][$column])) {
 			self::$cell[$row][$column] = new Cell(new Coordinate($row, $column));
 		}
@@ -96,7 +104,7 @@ class Cell implements \SplSubject
 	public function setValue($value)
 	{
 		if ($this->hasValue()) {
-		    return ;
+		    return $this;
 		}
 
 		if (!is_numeric($value) || ($value < 1) || ($value > 9)) {
@@ -110,7 +118,7 @@ class Cell implements \SplSubject
 		$this->value = $value;
 		$this->candidates = [];
 
-		$this->notify();
+		return $this->notify();
 	}
 
 	public function getValue()

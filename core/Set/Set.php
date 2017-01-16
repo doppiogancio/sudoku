@@ -64,8 +64,10 @@ class Set implements \SplObserver, \SplSubject
 			$this->removeCell($subject);
 
 			if (empty($this->getCells())) {
-				$this->notify();
+				return $this->notify();
 			}
+
+			$this->deleteCandidate($subject->getValue());
 		}
 	}
 
@@ -87,6 +89,8 @@ class Set implements \SplObserver, \SplSubject
 
 	public function removeCell( Cell $cell )
 	{
+	    print sprintf("Removing from region cell %s\n", $cell->__toString());
+
 		foreach ($this->cells as $key => $c) {
 			if ($c == $cell) {
 				unset($this->cells[$key]);

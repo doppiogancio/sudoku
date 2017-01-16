@@ -74,29 +74,6 @@ class Sudoku implements \SplObserver
             if ($subject->hasValue()) {
                 $this->numberPlaced++;
 
-	            $coordinate = $subject->getCoordinate();
-
-	            $regionId = Region::getIdByCoordinate($coordinate->getRow(), $coordinate->getColumn());
-
-	            $cellSetList = [];
-
-	            if (!empty($this->rows[$coordinate->getRow()])) {
-		            $cellSetList[] = $this->rows[$coordinate->getRow()];
-	            }
-
-	            if (!empty($this->columns[$coordinate->getColumn()])) {
-		            $cellSetList[] = $this->columns[$coordinate->getColumn()];
-	            }
-
-	            if (!empty($this->regions[$regionId])) {
-		            $cellSetList[] = $this->regions[$regionId];
-	            }
-
-	            foreach ($cellSetList as $set) {
-		            /** @var Set $set */
-		            $set->deleteCandidate($subject->getValue());
-	            }
-
                 if ($this->numberPlaced == 81) {
 
                 }
