@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: fabrizio.gargiulo
- * Date: 11/01/17
- * Time: 16:26
- */
-
 
 use core\Sudoku\Sudoku;
 use core\Cell\Cell;
@@ -15,8 +8,6 @@ class SudokuTest extends PHPUnit_Framework_TestCase
 {
     public function testSudokuInit()
     {
-        $this->assertTrue(true);
-        return true;
         $text = "_2__9_86_
 		8_______3
 		693__8__2

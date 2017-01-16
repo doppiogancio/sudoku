@@ -5,7 +5,7 @@ namespace core\Exception;
 
 class WrongValueException extends CoreException
 {
-	public function __construct( ) {
-		parent::__construct( "WrongValueException" );
+	public function __construct( $message = 'WrongValueException' ) {
+		parent::__construct( $message );
 	}
 }

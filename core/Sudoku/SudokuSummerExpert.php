@@ -2,8 +2,10 @@
 
 namespace core\Sudoku;
 
+use core\Cell\Cell;
 
-class SudokuSummerExpert extends Sudoku {
+class SudokuSummerExpert extends Sudoku
+{
 	public function __construct()
 	{
 		parent::__construct();
@@ -30,5 +32,7 @@ class SudokuSummerExpert extends Sudoku {
 		__5__9__7";
 
 		$this->initFromString($text);
+
+		Cell::getInstance(2,2)->setValue(8);
 	}
 }

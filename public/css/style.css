@@ -1,0 +1,74 @@
+.clearfix:after {
+    visibility: hidden;
+    display: block;
+    font-size: 0;
+    content: " ";
+    clear: both;
+    height: 0;
+}
+.clearfix { display: inline-block; }
+/* start commented backslash hack \*/
+* html .clearfix { height: 1%; }
+.clearfix { display: block; }
+/* close commented backslash hack */
+
+table {
+    border-width: 1px;
+}
+
+th, td {
+    border: 1px solid black;
+}
+
+th {
+    font-weight: normal;
+}
+
+td {
+    font-weight: bold;
+}
+
+.sudoku-grid {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+.sudoku-grid .cell {
+    vertical-align: middle;
+    width: 60px;
+    height: 60px;
+    text-align: center;
+    font-size: 25px;
+}
+
+/* Sudoku */
+.row-1 {
+    border-top-width: 3px;
+}
+
+.column-1 {
+    border-left-width: 3px;
+}
+
+.row-3, .row-6, .row-9 {
+    border-bottom-width: 3px;
+}
+
+.column-3, .column-6, .column-9 {
+    border-right-width: 3px;
+}
+
+.candidates {
+    width: 60px;
+    height: 60px;
+}
+
+.candidates .candidate {
+    font-size: 12px;
+    float: left;
+    width: 20px;
+    height: 20px;
+    text-align: center;
+    line-height: 20px;
+    color: lightgray;
+}

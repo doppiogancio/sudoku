@@ -4,77 +4,146 @@ namespace core\Sudoku;
 
 use core\Cell\Cell;
 use core\Coordinate\Coordinate;
-use core\Queue\Queue;
+
+use core\Set\Row;
+use core\Set\Set;
+use core\Set\Region;
+use core\Set\Column;
 
 use core\Strategy\Strategy;
-use core\Strategy\StrategyRowFiller;
-use core\Strategy\StrategyColumnFiller;
-use core\Strategy\StrategyRegionFiller;
-use SplObserver;
-use SplSubject;
 
-class Sudoku implements SplObserver
+class Sudoku implements \SplObserver
 {
 	protected $grid;
-	protected $q;
 
-    protected $strategies;
     protected $numberPlaced = 0;
+
+	/**
+	 * @var Row[]
+	 */
+	protected $rows;
+
+	/**
+	 * @var Column[]
+	 */
+	protected $columns;
+
+	/**
+	 * @var Region[]
+	 */
+	protected $regions;
 
 	public function __construct()
 	{
-		for ($i=1;$i<=9;$i++) {
-			for ($j=1;$j<=9;$j++) {
-				$cell = new Cell(new Coordinate($i, $j));
-                $this->grid[$i][$j] = $cell;
-                $cell->attach($this);
-			}
+
+		$this->rows = [];
+		$this->columns = [];
+		$this->regions = [];
+
+		foreach (range(1,9) as $i) {
+			$this->rows[$i] = (new Row())->attach($this);
+			$this->columns[$i] = (new Column())->attach($this);
+			$this->regions[$i] = (new Region())->attach($this);
 		}
 
-		$this->strategies = [
-			new StrategyRowFiller($this),
-			new StrategyColumnFiller($this),
-			new StrategyRegionFiller($this)
-		];
+		// row
+		foreach (range(1,9) as $row) {
+			// column
+			foreach (range(1,9) as $column) {
+
+				$cell = Cell::getInstance($row, $column);
+				$regionId = Region::getIdByCoordinate($row, $column);
+
+				$this->rows[$row]->addCell($cell);
+				$this->columns[$column]->addCell($cell);
+				$this->regions[$regionId]->addCell($cell);
+
+				$cell->attach($this);
+
+                $this->grid[$row][$column] = $cell;
+			}
+		}
 	}
 
     /**
-     * @param SplSubject $subject
+     * @param \SplSubject $subject
      */
-    public function update(SplSubject $subject)
+    public function update(\SplSubject $subject)
     {
         if ($subject instanceof Cell) {
             if ($subject->hasValue()) {
                 $this->numberPlaced++;
 
-                echo sprintf("numberPlaced #%d\n", $this->numberPlaced);
+	            $coordinate = $subject->getCoordinate();
+
+	            $regionId = Region::getIdByCoordinate($coordinate->getRow(), $coordinate->getColumn());
+
+	            $cellSetList = [];
+
+	            if (!empty($this->rows[$coordinate->getRow()])) {
+		            $cellSetList[] = $this->rows[$coordinate->getRow()];
+	            }
+
+	            if (!empty($this->columns[$coordinate->getColumn()])) {
+		            $cellSetList[] = $this->columns[$coordinate->getColumn()];
+	            }
+
+	            if (!empty($this->regions[$regionId])) {
+		            $cellSetList[] = $this->regions[$regionId];
+	            }
+
+	            foreach ($cellSetList as $set) {
+		            /** @var Set $set */
+		            $set->deleteCandidate($subject->getValue());
+	            }
 
                 if ($this->numberPlaced == 81) {
-                    throw new \Exception('End of the game');
+
                 }
 
                 return ;
             }
-
-            $candidates = $subject->getCandidates();
-
-            if (empty($candidates)) {
-                $cell = $this->q->shift();
-                return;
-            }
-
-            $newValue = array_shift($candidates);
-
-            $this->setValue($newValue, $subject->getCoordinate()->getRow(), $subject->getCoordinate()->getColumn());
         }
+
+	    if ($subject instanceof Row) {
+		    foreach ($this->rows as $key => $row) {
+			    if ($row == $subject) {
+				    unset($this->rows[$key]);
+			    }
+		    }
+	    }
+
+	    if ($subject instanceof Column) {
+		    foreach ($this->columns as $key => $column) {
+				if ($column == $subject) {
+					unset($this->columns[$key]);
+				}
+		    }
+	    }
+
+	    if ($subject instanceof Region) {
+		    foreach ($this->regions as $key => $region) {
+			    if ($region == $subject) {
+				    unset($this->regions[$key]);
+			    }
+		    }
+	    }
+
     }
 
-	public function applyStrategies()
+	public function getRows()
 	{
-		/** @var Strategy $strategy */
-		foreach ($this->strategies as $strategy) {
-			$strategy->execute();
-		}
+		return $this->rows;
+	}
+
+	public function getColumns()
+	{
+		return $this->columns;
+	}
+
+	public function getRegions()
+	{
+		return $this->regions;
 	}
 
 	/**
@@ -85,7 +154,7 @@ class Sudoku implements SplObserver
 	 */
 	public function getCell($row, $column)
 	{
-		return $this->grid[$row][$column];
+		return Cell::getInstance($row, $column);
 	}
 
 	public function initFromString($string)
@@ -98,112 +167,23 @@ class Sudoku implements SplObserver
 					continue;
 				}
 
-				$this->setValue($row[$i], $rowNumber + 1, $i + 1);
-			}
-		}
-	}
-
-	public function getCellCandidates($row, $column)
-	{
-		/** @var Cell $cell */
-		$cell = $this->grid[$row][$column];
-		return $cell->getCandidates();
-	}
-
-	public function deleteCandidateFromCell($value, $row, $column)
-	{
-		/** @var Cell $cell */
-		$cell = $this->grid[$row][$column];
-
-		if (!$cell->hasCandidate($value)) {
-			return $this;
-		}
-
-		$cell->deleteCandidate($value);
-
-		return $this;
-	}
-
-	protected function _deleteCandidateFromRow($value, $row)
-	{
-		for ($i = 1; $i <= 9; $i++) {
-			$this->deleteCandidateFromCell($value, $row, $i);
-		}
-	}
-
-	protected function _deleteCandidateFromColumn($value, $column)
-	{
-		for ($i = 1; $i <= 9; $i++) {
-			$this->deleteCandidateFromCell($value, $i, $column);
-		}
-	}
-
-	protected function _getRegionOriginByCell($row, $column)
-	{
-		$origin = [
-			'row' => 4,
-			'column' => 4
-		];
-
-		if ($row < 4) {
-			$origin['row'] = 1;
-		}
-
-		if ($row > 6) {
-			$origin['row'] = 7;
-		}
-
-		if ($column < 4) {
-			$origin['column'] = 1;
-		}
-
-		if ($column > 6) {
-			$origin['column'] = 7;
-		}
-
-		return $origin;
-	}
-
-	protected function _deleteCandidateFromRegion($value, $row, $column)
-	{
-		$origin = $this->_getRegionOriginByCell($row, $column);
-
-		for ($row = $origin['row']; $row <= ($origin['row'] + 2); $row++) {
-			for ($column = $origin['column']; $column <= ($origin['column'] + 2); $column++) {
-				$this->deleteCandidateFromCell($value, $row, $column);
+				$this->getCell($rowNumber + 1, $i + 1)
+					->setValue($row[$i]);
 			}
 		}
 	}
 
 	public function setValueWithCoordinate($value, Coordinate $coordinate)
 	{
-		return $this->setValue($value, $coordinate->getRow(), $coordinate->getColumn());
-	}
-
-	public function setValue($value, $row, $column)
-	{
-		/** @var Cell $cell */
-		$cell = $this->getCell($row, $column);
-
-		if ($cell->hasValue()) {
-		    return ;
-        }
-
-		$cell->setValue($value);
-
-		// TODO: Elimina tale valore da tutti i candidati della riga, colonna, e regione
-
-		$this->_deleteCandidateFromRow($value, $row);
-		$this->_deleteCandidateFromColumn($value, $column);
-		$this->_deleteCandidateFromRegion($value, $row, $column);
-
-		return $this;
+		return $this->getCell($coordinate->getRow(), $coordinate->getColumn())
+		     ->setValue($value);
 	}
 
 	public function setValues($values)
 	{
 		foreach ($values as $value) {
-			$this->setValue($value[0], $value[1], $value[2]);
+			$this->getCell($value[1], $value[2])
+			     ->setValue($value[0]);
 		}
 	}
 

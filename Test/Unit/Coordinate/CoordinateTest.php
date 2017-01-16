@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: fabrizio.gargiulo
- * Date: 11/01/17
- * Time: 16:24
- */
-
 
 use core\Coordinate\Coordinate;
 

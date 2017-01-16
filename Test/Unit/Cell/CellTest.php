@@ -1,15 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: fabrizio.gargiulo
- * Date: 11/01/17
- * Time: 16:32
- */
-
 
 use core\Cell\Cell;
 use core\Coordinate\Coordinate;
-use core\Exception\WrongValueException;
 
 class CellTest extends PHPUnit_Framework_TestCase
 {
@@ -68,22 +60,21 @@ class CellTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @param Cell $cell
 	 *
-	 * @expectedException \core\Exception\LastCandidateException
 	 */
 	public function testDeleteLastCandidate(Cell $cell)
 	{
 		$cell->deleteCandidate(3);
 		$cell->deleteCandidate(5);
+
 		$cell->deleteCandidate(8);
 	}
 
     /**
-     * @depends testCellDefaults
      * @param Cell $cell
-     * @expectedException \core\Exception\WrongValueException
      */
-    public function testSetWrongValue(Cell $cell)
+    public function testSetWrongValue()
     {
+	    $cell = new Cell(new Coordinate(7, 8));
         $cell->setValue(1);
 
         $this->assertEquals(1, $cell->getValue());

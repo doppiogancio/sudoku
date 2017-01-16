@@ -6,16 +6,18 @@ use core\Coordinate\Coordinate;
 use core\Exception\LastCandidateException;
 use core\Exception\NotEmptyException;
 use core\Exception\WrongValueException;
-use SplObserver;
-use SplSubject;
 
-class Cell implements SplSubject
+class Cell implements \SplSubject
 {
+	/** @var  Cell[9][9] */
+	static $cell;
 	protected $value;
 	protected $candidates;
 
     protected $coordinate;
-    protected $observers;
+
+	/** @var  \SplObserver[] */
+	protected $observers;
 
 	public function __construct(Coordinate $coordinate)
 	{
@@ -26,38 +28,60 @@ class Cell implements SplSubject
 		$this->observers = [];
 	}
 
-    /**
-     * @param SplObserver $observer
-     * @return mixed
-     */
-    public function attach(SplObserver $observer)
-    {
-        $this->observers[] = $observer;
-        return $this;
-    }
+	/**
+	 * @param $row
+	 * @param $column
+	 *
+	 * @return Cell
+	 */
+	static public function getInstance($row, $column)
+	{
+		if (empty(self::$cell[$row][$column])) {
+			self::$cell[$row][$column] = new Cell(new Coordinate($row, $column));
+		}
 
-    /**
-     * @param SplObserver $observer
-     * @return mixed
-     */
-    public function detach(SplObserver $observer)
-    {
-        foreach($this->observers as $okey => $oval) {
-            if ($oval == $observer) {
-                unset($this->observers[$okey]);
-            }
-        }
+		return self::$cell[$row][$column];
+	}
 
-        return $this;
-    }
-    public function notify()
-    {
-        foreach($this->observers as $obs) {
-            $obs->update($this);
-        }
+	/**
+	 * @param \SplObserver $observer
+	 *
+	 * @return mixed
+	 */
+	public function attach( \SplObserver $observer )
+	{
+		$this->observers[] = $observer;
+		return $this;
+	}
 
-        return $this;
-    }
+	/**
+	 * @param \SplObserver $observer
+	 *
+	 * @return mixed
+	 */
+	public function detach( \SplObserver $observer )
+	{
+		foreach ($this->observers as $key => $o) {
+			if ($o == $observer) {
+				unset($this->observers[$key]);
+			}
+		}
+
+		return $this;
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function notify()
+	{
+		foreach($this->observers as $observer) {
+			/** @var \SplObserver $observer */
+			$observer->update($this);
+		}
+
+		return $this;
+	}
 
 	public function getCoordinate()
 	{
@@ -72,7 +96,7 @@ class Cell implements SplSubject
 	public function setValue($value)
 	{
 		if ($this->hasValue()) {
-		    throw new NotEmptyException("Current value: ".$this->getValue());
+		    return ;
 		}
 
 		if (!is_numeric($value) || ($value < 1) || ($value > 9)) {
@@ -80,7 +104,7 @@ class Cell implements SplSubject
 		}
 
 		if (!in_array($value, $this->getCandidates())) {
-		    throw new WrongValueException('Illegal value');
+		    throw new WrongValueException(sprintf("Trying to setValue(%d) with (%s)", $value, implode(",", $this->getCandidates())));
 		}
 
 		$this->value = $value;
@@ -121,11 +145,11 @@ class Cell implements SplSubject
 		}
 
 		if ($this->hasValue()) {
-			throw new NotEmptyException("Current value: ".$this->getValue());
+			return $this;
 		}
 
 		if (!$this->hasCandidate($candidate)) {
-			throw new WrongValueException();
+			return $this;
 		}
 
 		$key = array_search($candidate, $this->candidates);
@@ -134,8 +158,9 @@ class Cell implements SplSubject
 			unset($this->candidates[$key]);
 		}
 
-		if ($this->countCandidates() == 1) {
-		    $this->notify();
+		if ($this->countCandidates() === 1) {
+		    $value = current($this->getCandidates());
+			$this->setValue($value);
         }
 	}
 

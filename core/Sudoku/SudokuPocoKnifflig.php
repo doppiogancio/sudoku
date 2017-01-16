@@ -23,9 +23,8 @@ class SudokuPocoKnifflig extends Sudoku {
 		$this->initFromString($text);
 
 		// Extra
-		$this->setValue(6, 1, 9);
-		$this->setValue(6, 3, 3);
-		$this->setValue(7, 3, 1);
-
+		$this->getCell(1, 9)->setValue(6);
+		$this->getCell(3, 3)->setValue(6);
+		$this->getCell(3, 1)->setValue(7);
 	}
 }

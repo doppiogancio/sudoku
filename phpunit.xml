@@ -1,8 +1,14 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<phpunit colors="true" verbose="true">
-    <testsuite name="Sudoku Test Suite">
-        <directory>Test</directory>
-    </testsuite>
+<phpunit colors="true"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         stopOnFailure="true">
+
+    <testsuites>
+        <testsuite name="Sudoku Test Suite">
+            <directory>Test</directory>
+        </testsuite>
+    </testsuites>
 
     <php>
         <ini name="display_errors" value="On" />

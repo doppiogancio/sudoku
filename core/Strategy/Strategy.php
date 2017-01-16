@@ -8,16 +8,48 @@
 
 namespace core\Strategy;
 
-use core\Sudoku\Sudoku;
+use core\Set\Set;
+use core\Cell\Cell;
 
-abstract class Strategy {
-
-	protected $sudoku;
-
-	public function __construct(Sudoku $sudoku)
+class Strategy
+{
+	public function tryToSetNumber(Set $set, $number)
 	{
-		$this->sudoku = $sudoku;
+		$cellCandidates = [];
+
+		foreach ($set->getCells() as $cell) {
+			/** @var Cell $cell */
+			if ($cell->hasValue() && $cell->getValue() == $number) {
+				break;
+			}
+
+			if ($cell->hasValue()) {
+				continue;
+			}
+
+			if ($cell->hasCandidate($number)) {
+				$cellCandidates[] = $cell;
+			}
+		}
+
+		if (count($cellCandidates) === 1) {
+			/** @var Cell $cell */
+			$cell = $cellCandidates[0];
+			$cell->setValue($number);
+		}
 	}
 
-	abstract public function execute();
+	/**
+	 * @param Set[] $sets
+	 */
+	public function execute(array $sets)
+	{
+		foreach (range(1,9) as $number) {
+			foreach ($sets as $set) {
+				$this->tryToSetNumber($set, $number);
+			}
+		}
+
+		return $this;
+	}
 }
