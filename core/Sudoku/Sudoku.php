@@ -18,51 +18,47 @@ class Sudoku implements \SplObserver
 
     protected $numberPlaced = 0;
 
-	/**
-	 * @var Row[]
-	 */
-	protected $rows;
-
-	/**
-	 * @var Column[]
-	 */
-	protected $columns;
-
-	/**
-	 * @var Region[]
-	 */
-	protected $regions;
+	/** @var Set[]  */
+	protected $sets;
 
 	public function __construct()
 	{
-
-		$this->rows = [];
-		$this->columns = [];
-		$this->regions = [];
+		$this->sets = [];
 
 		foreach (range(1,9) as $i) {
-			$this->rows[$i] = (new Row())->attach($this);
-			$this->columns[$i] = (new Column())->attach($this);
-			$this->regions[$i] = (new Region())->attach($this);
+			$this->addSet(Row::get($i));
+			$this->addSet(Column::get($i));
+			$this->addSet(Region::get($i));
 		}
 
 		// row
 		foreach (range(1,9) as $row) {
 			// column
 			foreach (range(1,9) as $column) {
-
 				$cell = Cell::getInstance($row, $column);
 				$regionId = Region::getIdByCoordinate($row, $column);
 
-				$this->rows[$row]->addCell($cell);
-				$this->columns[$column]->addCell($cell);
-				$this->regions[$regionId]->addCell($cell);
+				Row::get($row)->addCell($cell);
+				Column::get($column)->addCell($cell);
+				Region::get($regionId)->addCell($cell);
 
 				$cell->attach($this);
-
                 $this->grid[$row][$column] = $cell;
 			}
 		}
+	}
+
+	/**
+	 * @param Set $set
+	 *
+	 * @return $this
+	 */
+	public function addSet(Set $set)
+	{
+		$set->attach($this);
+
+		$this->sets[] = $set;
+		return $this;
 	}
 
     /**
@@ -82,45 +78,21 @@ class Sudoku implements \SplObserver
             }
         }
 
-	    if ($subject instanceof Row) {
-		    foreach ($this->rows as $key => $row) {
-			    if ($row == $subject) {
-				    unset($this->rows[$key]);
+	    if ($subject instanceof Set) {
+		    foreach ($this->sets as $key => $set) {
+			    if ($set == $subject) {
+				    unset($this->sets[$key]);
 			    }
 		    }
 	    }
-
-	    if ($subject instanceof Column) {
-		    foreach ($this->columns as $key => $column) {
-				if ($column == $subject) {
-					unset($this->columns[$key]);
-				}
-		    }
-	    }
-
-	    if ($subject instanceof Region) {
-		    foreach ($this->regions as $key => $region) {
-			    if ($region == $subject) {
-				    unset($this->regions[$key]);
-			    }
-		    }
-	    }
-
     }
 
-	public function getRows()
+	/**
+	 * @return Set[]
+	 */
+	public function getSets()
 	{
-		return $this->rows;
-	}
-
-	public function getColumns()
-	{
-		return $this->columns;
-	}
-
-	public function getRegions()
-	{
-		return $this->regions;
+		return $this->sets;
 	}
 
 	/**

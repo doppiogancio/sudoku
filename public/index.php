@@ -5,21 +5,15 @@ require_once "./../loader.php";
 use core\Cell\CellDecorator;
 use core\Set\Region;
 use core\Strategy\Strategy;
+use core\Strategy\StrategyCandidatesRow;
 
 try {
 	$sudoku = new \core\Sudoku\SudokuExtreme();
 
-	(new Strategy())->execute($sudoku->getRows())
-                ->execute($sudoku->getColumns())
-                ->execute($sudoku->getRegions());
-
-	(new Strategy())->execute($sudoku->getRows())
-	                ->execute($sudoku->getColumns())
-	                ->execute($sudoku->getRegions());
-
-	(new Strategy())->execute($sudoku->getRows())
-	                ->execute($sudoku->getColumns())
-	                ->execute($sudoku->getRegions());
+	(new Strategy())->execute($sudoku->getSets());
+	(new StrategyCandidatesRow())->execute($sudoku->getSets());
+	(new Strategy())->execute($sudoku->getSets());
+	(new StrategyCandidatesRow())->execute($sudoku->getSets());
 }
 catch (Exception $e) {
 	echo "<pre>";
