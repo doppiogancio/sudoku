@@ -6,16 +6,27 @@ use core\Cell\Cell;
 
 class Set implements \SplObserver, \SplSubject
 {
+	protected $id;
+
 	/** @var array[9] $cells  */
 	protected $cells;
 
 	/** @var  \SplObserver[] */
 	protected $observers;
 
-	public function __construct()
+	public function __construct($id = 0)
 	{
+		$this->id = $id;
 		$this->cells = [];
 		$this->observers = [];
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getId()
+	{
+		return $this->id;
 	}
 
 	/**
@@ -89,8 +100,6 @@ class Set implements \SplObserver, \SplSubject
 
 	public function removeCell( Cell $cell )
 	{
-	    print sprintf("Removing from region cell %s\n", $cell->__toString());
-
 		foreach ($this->cells as $key => $c) {
 			if ($c == $cell) {
 				unset($this->cells[$key]);
@@ -107,4 +116,21 @@ class Set implements \SplObserver, \SplSubject
 		}
 	}
 
+	/**
+	 * @param int $number
+	 *
+	 * @return int
+	 */
+	public function countCellsWithCandidate($number)
+	{
+		$counter = 0;
+
+		foreach ($this->getCells() as $cell) {
+			if ($cell->hasCandidate($number)) {
+				$counter++;
+			}
+		}
+
+		return $counter;
+	}
 }
