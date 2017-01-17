@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: fabriziogargiulo
- * Date: 08/01/17
- * Time: 17:45
- */
 
 namespace core\Strategy;
 
@@ -13,7 +7,12 @@ use core\Cell\Cell;
 
 class Strategy
 {
-	public function tryToSetNumber(Set $set, $number)
+	/**
+	 * @param $number
+	 *
+	 * @throws \core\Exception\WrongValueException
+	 */
+	protected function executeStrategy($set, $number)
 	{
 		$cellCandidates = [];
 
@@ -46,7 +45,7 @@ class Strategy
 	{
 		foreach (range(1,9) as $number) {
 			foreach ($sets as $set) {
-				$this->tryToSetNumber($set, $number);
+				$this->executeStrategy($set, $number);
 			}
 		}
 
