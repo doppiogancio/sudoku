@@ -12,3 +12,10 @@ function my_autoloader($class)
 }
 
 spl_autoload_register('my_autoloader');
+
+function dump($data)
+{
+	echo "<pre>";
+	print_r($data);
+	echo "</pre>";
+}

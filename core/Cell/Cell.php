@@ -4,19 +4,34 @@ namespace core\Cell;
 
 use core\Coordinate\Coordinate;
 use core\Exception\LastCandidateException;
-use core\Exception\NotEmptyException;
 use core\Exception\WrongValueException;
+use core\Log\Log;
 
 class Cell implements \SplSubject
 {
-	/** @var  Cell[9][9] */
+	/**
+	 * @var Cell[9][9]
+	 */
 	static $cell;
+
+	/**
+	 * @var int
+	 */
 	protected $value;
+
+	/**
+	 * @var int[]
+	 */
 	protected $candidates;
 
+	/**
+	 * @var Coordinate
+	 */
     protected $coordinate;
 
-	/** @var  \SplObserver[] */
+	/**
+	 * @var \SplObserver[]
+	 */
 	protected $observers;
 
 	public function __construct(Coordinate $coordinate)
@@ -79,7 +94,7 @@ class Cell implements \SplSubject
 	}
 
 	/**
-	 * @return mixed
+	 * @return $this
 	 */
 	public function notify()
 	{
@@ -91,16 +106,28 @@ class Cell implements \SplSubject
 		return $this;
 	}
 
+	/**
+	 * @return Coordinate
+	 */
 	public function getCoordinate()
 	{
 		return $this->coordinate;
 	}
 
+	/**
+	 * @return bool
+	 */
 	public function hasValue()
 	{
 		return $this->value != SUDOKU_DEFAULT_CELL_VALUE;
 	}
 
+	/**
+	 * @param $value
+	 *
+	 * @return $this|Cell
+	 * @throws WrongValueException
+	 */
 	public function setValue($value)
 	{
 		if ($this->hasValue()) {
@@ -118,34 +145,60 @@ class Cell implements \SplSubject
 		$this->value = $value;
 		$this->candidates = [];
 
+		Log::addInfo('Set value', $this->__toString());
+
 		return $this->notify();
 	}
 
+	/**
+	 * @return string
+	 */
 	public function getValue()
 	{
 		return $this->value;
 	}
 
+	/**
+	 * @return array
+	 */
 	public function getCandidates()
 	{
 		return $this->candidates;
 	}
 
+	/**
+	 * @return int
+	 */
 	public function countCandidates()
 	{
 		return count($this->getCandidates());
 	}
 
+	/**
+	 * @return bool
+	 */
 	public function hasCandidates()
 	{
 		return $this->countCandidates() > 0;
 	}
 
+	/**
+	 * @param $candidate
+	 *
+	 * @return bool
+	 */
 	public function hasCandidate($candidate)
 	{
 		return in_array($candidate, $this->getCandidates());
 	}
 
+	/**
+	 * @param $candidate
+	 *
+	 * @return $this
+	 * @throws LastCandidateException
+	 * @throws WrongValueException
+	 */
 	public function deleteCandidate($candidate)
 	{
 		if ($this->countCandidates() === 1) {
@@ -167,11 +220,17 @@ class Cell implements \SplSubject
 		}
 
 		if ($this->countCandidates() === 1) {
+			Log::addSuccess('Ultimo candidato', sprintf("Ultimo candidato per %s", $this->__toString()));
 		    $value = current($this->getCandidates());
 			$this->setValue($value);
         }
+
+		return $this;
 	}
 
+	/**
+	 * @return string
+	 */
 	public function __toString()
 	{
 		return sprintf("Cell at (%d,%d) = %s", $this->getCoordinate()->getRow(), $this->getCoordinate()->getColumn(), $this->getValue());

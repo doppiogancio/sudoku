@@ -35,8 +35,8 @@ td {
 
 .sudoku-grid .cell {
     vertical-align: middle;
-    width: 60px;
-    height: 60px;
+    width: 48px;
+    height: 48px;
     text-align: center;
     font-size: 25px;
 }
@@ -59,16 +59,16 @@ td {
 }
 
 .candidates {
-    width: 60px;
-    height: 60px;
+    width: 48px;
+    height: 48px;
 }
 
 .candidates .candidate {
     font-size: 12px;
     float: left;
-    width: 20px;
-    height: 20px;
+    width: 16px;
+    height: 16px;
     text-align: center;
-    line-height: 20px;
+    line-height: 16px;
     color: lightgray;
 }

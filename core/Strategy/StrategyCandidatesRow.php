@@ -9,6 +9,8 @@ use core\Set\Row;
 use core\Set\Region;
 use core\Set\Column;
 
+use core\Log\Log;
+
 class StrategyCandidatesRow extends Strategy
 {
 	/**
@@ -92,11 +94,11 @@ class StrategyCandidatesRow extends Strategy
 				return ;
 			}
 
-			print sprintf("Eliminare tutti i <b>%d</b> dalla riga %d eccetto regione %d: (%d>%d).\n<br>",
-				$number, $row, $set->getId(),
-				Row::get($row)->countCellsWithCandidate($number),
-				$rows[$row]
+			$text = sprintf("Eliminare tutti i <b>%d</b> dalla <b>riga %d</b> eccetto <b>regione %d</b>.",
+				$number, $row, $set->getId()
 			);
+
+			Log::addSuccess('Strategy', $text);
 
 			$this->deleteCandidateFromRowWithExclude(Row::get($row), $number, array_keys($columns));
 		}
@@ -108,7 +110,8 @@ class StrategyCandidatesRow extends Strategy
 				return ;
 			}
 
-			print sprintf("Eliminare tutti i <b>%d</b> dalla colonna %d eccetto regione %d.\n<br>", $number, $column, $set->getId());
+			$text = sprintf("Eliminare tutti i <b>%d</b> dalla <b>colonna %d</b> eccetto <b>regione %d</b>.", $number, $column, $set->getId());
+			Log::addSuccess('Strategy', $text);
 
 			$this->deleteCandidateFromColumnWithExclude(Column::get($column), $number, array_keys($rows));
 		}

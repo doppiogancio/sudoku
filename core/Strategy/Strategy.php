@@ -4,15 +4,17 @@ namespace core\Strategy;
 
 use core\Set\Set;
 use core\Cell\Cell;
+use core\Log\Log;
 
 class Strategy
 {
 	/**
+	 * @param Set $set
 	 * @param $number
 	 *
 	 * @throws \core\Exception\WrongValueException
 	 */
-	protected function executeStrategy($set, $number)
+	protected function executeStrategy(Set $set, $number)
 	{
 		$cellCandidates = [];
 
@@ -32,6 +34,9 @@ class Strategy
 		}
 
 		if (count($cellCandidates) === 1) {
+			$text = sprintf("Trovato il candidato per <b>%s #%d</b>.", get_class($set), $set->getId());
+			Log::addSuccess('Strategy', $text);
+
 			/** @var Cell $cell */
 			$cell = $cellCandidates[0];
 			$cell->setValue($number);
@@ -39,7 +44,9 @@ class Strategy
 	}
 
 	/**
-	 * @param Set[] $sets
+	 * @param array $sets
+	 *
+	 * @return $this
 	 */
 	public function execute(array $sets)
 	{
